@@ -1,12 +1,14 @@
 var fs = require('q-io/fs'),
-		Q  = require('q');
+		Q  = require('q')
+    configen
+    ;
 
-module.exports = function(file){
+function configen(file){
 	this.readCredentialFile = fs.read(file),
 	this.listOfRegisteredEnvVars = [];
 }
 
-module.exports.prototype.register = function(name, obj){
+configen.prototype.register = function(name, obj){
 	this[name] = this.readCredentialFile.then(function(creds){
 		creds = JSON.parse(creds);
 		var t = new obj(creds[name]);
@@ -21,6 +23,12 @@ module.exports.prototype.register = function(name, obj){
 	return this[name];
 }
 
-module.exports.prototype.loaded = function(injectors){
+configen.prototype.loaded = function(injectors){
 	return Q.all(injectors||this.listOfRegisteredEnvVars);
 }
+
+configen.generate = function(file){
+  return new configen(file);
+}
+
+module.exports = configen;
