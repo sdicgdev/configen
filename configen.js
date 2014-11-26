@@ -18,7 +18,11 @@ configen.prototype.register = function(name, obj){
 		}
 		t._options = creds[name];
 		return t
-	});
+	})
+  .catch(err){
+    console.log(err);
+    console.log(err.stack);
+  };
 	this.listOfRegisteredEnvVars.push(name);
 	return this[name];
 }
