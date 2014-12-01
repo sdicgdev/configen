@@ -9,9 +9,18 @@ function configen(file){
 }
 
 configen.prototype.register = function(name, obj){
+  var singular
+    ;
+
+  if(!obj){
+    obj = name;
+    name = '_';
+    singular = true;
+  }
+
 	this[name] = this.readCredentialFile.then(function(creds){
 		creds = JSON.parse(creds);
-		var t = new obj(creds[name]);
+		var t = new obj(singular?creds:creds[name]);
 		t.patch = function(name, func){
 			t['_'+name] = t[name];
 			t[name] = func;
