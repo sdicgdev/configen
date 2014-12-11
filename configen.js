@@ -9,18 +9,31 @@ function configen(file){
 }
 
 configen.prototype.register = function(name, obj){
+  var singular
+    ;
+
+  if(!obj){
+    obj = name;
+    name = '_';
+    singular = true;
+  }
+
 	this[name] = this.readCredentialFile.then(function(creds){
 		creds = JSON.parse(creds);
-		var t = new obj(creds[name]);
+    if(!singular){
+      creds = creds[name];
+    }
+		var t = new obj(creds);
 		t.patch = function(name, func){
 			t['_'+name] = t[name];
 			t[name] = func;
 		}
-		t._options = creds[name];
+		t._options = creds;
 		return t
 	})
   .catch(function(err){
-    console.log(err);
+    console.log("configen.js", "line 35");
+    console.log(err.message);
     console.log(err.stack);
   });
 	this.listOfRegisteredEnvVars.push(name);
